@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ragnar — Tale of the Tape</title>
+<meta name="description" content="About Ragnar, BJJ Black Belt — record, stats and grappling style." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --paper:#EDE3C8;
+    --paper-card:#E2D5AE;
+    --ink:#211C16;
+    --ink-soft:#4A4234;
+    --stone:#8A7F68;
+    --red:#9C2B22;
+    --gold:#A8842A;
+    --line: rgba(33,28,22,0.18);
+    --display:'Anton', sans-serif;
+    --serif:'Source Serif 4', Georgia, serif;
+    --mono:'Space Mono', monospace;
+  }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.6;
+    background-image:
+      radial-gradient(rgba(33,28,22,0.035) 1px, transparent 1px);
+    background-size:3px 3px;
+  }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 20px; }
+
+  /* ---------- NAV ---------- */
+  header{
+    border-bottom:2px solid var(--ink);
+    padding:16px 0;
+  }
+  .nav-row{
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .wordmark{
+    font-family:var(--display);
+    font-size:20px;
+    letter-spacing:0.06em;
+  }
+  .wordmark .dot{
+    display:inline-block; width:8px; height:8px; background:var(--red);
+    border-radius:50%; margin-right:6px; transform:translateY(-2px);
+  }
+  .back-link{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    border:1px solid var(--ink);
+    padding:7px 12px;
+    border-radius:2px;
+    transition:0.15s;
+  }
+  .back-link:hover{ background:var(--ink); color:var(--paper); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:44px 0 0;
+    position:relative;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--stone);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .hero-main{
+    display:flex;
+    gap:28px;
+    align-items:flex-start;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .medallion{
+    flex:0 0 auto;
+    width:118px; height:118px;
+    border-radius:50%;
+    border:3px solid var(--ink);
+    outline:1px dashed var(--stone);
+    outline-offset:5px;
+    overflow:hidden;
+    background:var(--paper-card);
+  }
+  .medallion img{ width:100%; height:100%; object-fit:cover; display:block; filter:sepia(0.15) contrast(1.05); }
+  .hero-text{ flex:1; min-width:240px; }
+  h1.title{
+    font-family:var(--display);
+    font-size:clamp(42px, 11vw, 78px);
+    line-height:0.92;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+  }
+  .ribbon{
+    display:inline-block;
+    margin-top:10px;
+    background:var(--red);
+    color:var(--paper);
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    padding:6px 14px;
+    transform:rotate(-2.5deg);
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .hero-bio{
+    margin-top:18px;
+    font-size:16px;
+    color:var(--ink-soft);
+    max-width:60ch;
+  }
+  .badge-row{
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin-top:16px;
+  }
+  .badge{
+    font-family:var(--mono);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    border:1px solid var(--ink);
+    padding:4px 9px;
+    border-radius:2px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- TICKET STUB : record ---------- */
+  .stub{
+    margin-top:30px;
+    border:2px solid var(--ink);
+    display:flex;
+    background:var(--paper-card);
+    position:relative;
+  }
+  .stub::before, .stub::after{
+    content:'';
+    position:absolute;
+    top:50%; transform:translateY(-50%);
+    width:18px; height:18px;
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:50%;
+  }
+  .stub::before{ left:-11px; }
+  .stub::after{ right:-11px; }
+  .stub-part{
+    flex:1;
+    padding:18px 22px;
+    text-align:center;
+  }
+  .stub-part + .stub-part{
+    border-left:2px dashed var(--ink);
+  }
+  .stub-part .num{
+    font-family:var(--display);
+    font-size:34px;
+    letter-spacing:0.02em;
+  }
+  .stub-part .lbl{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--stone);
+    margin-top:2px;
+  }
+
+  /* punch-hole divider */
+  .perf{
+    height:22px;
+    margin:36px 0 0;
+    background-image: radial-gradient(circle, var(--paper) 5px, transparent 5.5px);
+    background-size:22px 22px;
+    background-position:center;
+    border-top:2px dashed var(--ink);
+    border-bottom:2px dashed var(--ink);
+  }
+
+  /* ---------- SECTION HEADS ---------- */
+  section{ padding:40px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+  .sec-head{
+    display:flex; align-items:baseline; gap:12px;
+    margin-bottom:22px;
+  }
+  .sec-num{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--red);
+  }
+  h2.sec-title{
+    font-family:var(--display);
+    font-size:clamp(24px,5vw,32px);
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+  }
+
+  /* ---------- TALE OF THE TAPE (ledger) ---------- */
+  .ledger-row{
+    display:grid;
+    grid-template-columns: 150px 1fr 60px;
+    align-items:center;
+    gap:14px;
+    padding:11px 0;
+    border-bottom:1px dotted var(--line);
+  }
+  .ledger-row:last-child{ border-bottom:none; }
+  .ledger-label{
+    font-family:var(--mono);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+  .ledger-bar-bg{
+    height:9px;
+    background:var(--paper-card);
+    border:1px solid var(--ink);
+    position:relative;
+  }
+  .ledger-bar-fill{
+    height:100%;
+    background: repeating-linear-gradient(45deg, var(--red), var(--red) 5px, #B5453B 5px, #B5453B 10px);
+  }
+  .ledger-value{
+    font-family:var(--mono);
+    font-size:13px;
+    text-align:right;
+  }
+  @media (max-width:480px){
+    .ledger-row{ grid-template-columns: 110px 1fr 44px; gap:8px; }
+    .ledger-label{ font-size:10.5px; }
+  }
+
+  /* ---------- ARSENAL (technique stubs) ---------- */
+  .arsenal-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(150px,1fr));
+    gap:12px;
+  }
+  .tech-stub{
+    border:1.5px solid var(--ink);
+    background:var(--paper-card);
+    padding:12px 14px;
+    position:relative;
+  }
+  .tech-stub::before{
+    content:'';
+    position:absolute; left:0; top:0; bottom:0;
+    width:4px;
+    background:var(--gold);
+  }
+  .tech-stub .tname{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:14px;
+  }
+  .tech-stub .ttag{
+    font-family:var(--mono);
+    font-size:9.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--stone);
+    margin-top:3px;
+  }
+
+  /* ---------- ADVANCED NUMBERS ---------- */
+  .num-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:18px 28px;
+  }
+  .num-card .label{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--stone);
+  }
+  .num-card .number{
+    font-family:var(--display);
+    font-size:30px;
+    margin-top:2px;
+  }
+  .num-card .number small{
+    font-family:var(--serif);
+    font-size:14px;
+    font-weight:400;
+    color:var(--ink-soft);
+    margin-left:4px;
+  }
+  .num-card .desc{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+
+  /* ---------- SCOUTING REPORT ---------- */
+  .report{
+    border:2px solid var(--ink);
+    background:var(--paper-card);
+    padding:26px 26px 24px;
+    position:relative;
+    box-shadow:6px 6px 0 var(--line);
+  }
+  .report .stamp{
+    position:absolute;
+    top:16px; right:18px;
+    border:2px solid var(--red);
+    color:var(--red);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    padding:5px 10px;
+    transform:rotate(6deg);
+    opacity:0.85;
+  }
+  .report p{
+    font-size:16px;
+    color:var(--ink);
+    max-width:64ch;
+  }
+  .report p + p{ margin-top:12px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:30px 0 40px;
+    text-align:center;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.05em;
+    color:var(--stone);
+  }
+
+  @media (max-width:600px){
+    .wrap{ padding:0 16px; }
+    .hero-main{ gap:18px; }
+    .medallion{ width:88px; height:88px; }
+    .stub{ flex-direction:column; }
+    .stub-part + .stub-part{ border-left:none; border-top:2px dashed var(--ink); }
+    .stub::before, .stub::after{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap nav-row">
+      <a href="ragnar.html" class="wordmark"><span class="dot"></span>PODIUM</a>
+      <a href="ragnar.html" class="back-link">← Reels</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="eyebrow">Fighter Profile · No. 002</div>
+      <div class="hero-main">
+        <div class="medallion"><img src="avatar.jpg" alt="Ragnar"></div>
+        <div class="hero-text">
+          <h1 class="title">Ragnar</h1>
+          <span class="ribbon">BJJ Black Belt</span>
+          <p class="hero-bio">Ragnar trains and teaches out of Prague, Czech Republic — a BJJ black belt built on patience over panic, technique over brute force, and a Norse mindset that treats every roll as a saga worth telling.</p>
+          <div class="badge-row">
+            <span class="badge">Brazilian Jiu-Jitsu</span>
+            <span class="badge">Podium Founding Athlete</span>
+            <span class="badge">Prague</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- record stub -->
+      <div class="stub">
+        <div class="stub-part">
+          <div class="num">Black</div>
+          <div class="lbl">Belt Rank</div>
+        </div>
+        <div class="stub-part">
+          <div class="num">19 / 3</div>
+          <div class="lbl">Sub Win · Loss</div>
+        </div>
+        <div class="stub-part">
+          <div class="num">86%</div>
+          <div class="lbl">Submission rate</div>
+        </div>
+        <div class="stub-part">
+          <div class="num">603K</div>
+          <div class="lbl">Followers</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="perf"></div>
+
+    <!-- TALE OF THE TAPE -->
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <h2 class="sec-title">Tale of the Tape</h2>
+      </div>
+
+      <div class="ledger-row">
+        <span class="ledger-label">Guard Retention</span>
+        <div class="ledger-bar-bg"><div class="ledger-bar-fill" style="width:91%"></div></div>
+        <span class="ledger-value">91</span>
+      </div>
+      <div class="ledger-row">
+        <span class="ledger-label">Submission Game</span>
+        <div class="ledger-bar-bg"><div class="ledger-bar-fill" style="width:95%"></div></div>
+        <span class="ledger-value">95</span>
+      </div>
+      <div class="ledger-row">
+        <span class="ledger-label">Takedowns &amp; Wrestling</span>
+        <div class="ledger-bar-bg"><div class="ledger-bar-fill" style="width:74%"></div></div>
+        <span class="ledger-value">74</span>
+      </div>
+      <div class="ledger-row">
+        <span class="ledger-label">Positional Pressure</span>
+        <div class="ledger-bar-bg"><div class="ledger-bar-fill" style="width:88%"></div></div>
+        <span class="ledger-value">88</span>
+      </div>
+      <div class="ledger-row">
+        <span class="ledger-label">Escapes &amp; Defense</span>
+        <div class="ledger-bar-bg"><div class="ledger-bar-fill" style="width:84%"></div></div>
+        <span class="ledger-value">84</span>
+      </div>
+      <div class="ledger-row">
+        <span class="ledger-label">Grip Fighting IQ</span>
+        <div class="ledger-bar-bg"><div class="ledger-bar-fill" style="width:93%"></div></div>
+        <span class="ledger-value">93</span>
+      </div>
+    </section>
+
+    <!-- ARSENAL -->
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <h2 class="sec-title">The Arsenal</h2>
+      </div>
+      <div class="arsenal-grid">
+        <div class="tech-stub"><div class="tname">Berimbolo</div><div class="ttag">Guard</div></div>
+        <div class="tech-stub"><div class="tname">De La Riva Sweep</div><div class="ttag">Guard</div></div>
+        <div class="tech-stub"><div class="tname">Rear Naked Choke</div><div class="ttag">Submission</div></div>
+        <div class="tech-stub"><div class="tname">Armbar from Mount</div><div class="ttag">Submission</div></div>
+        <div class="tech-stub"><div class="tname">Knee-on-Belly</div><div class="ttag">Positioning</div></div>
+        <div class="tech-stub"><div class="tname">Single Leg X</div><div class="ttag">Leg Lock</div></div>
+        <div class="tech-stub"><div class="tname">Heel Hook</div><div class="ttag">Leg Lock</div></div>
+        <div class="tech-stub"><div class="tname">Back Take</div><div class="ttag">Transition</div></div>
+      </div>
+    </section>
+
+    <!-- ADVANCED NUMBERS -->
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <h2 class="sec-title">Advanced Numbers</h2>
+      </div>
+      <div class="num-grid">
+        <div class="num-card">
+          <div class="label">Sweeps Landed</div>
+          <div class="number">2.9 <small>per match</small></div>
+          <div class="desc">Success rate: 61%</div>
+        </div>
+        <div class="num-card">
+          <div class="label">Takedown Average</div>
+          <div class="number">1.8 <small>/ match</small></div>
+          <div class="desc">Accuracy: 52%</div>
+        </div>
+        <div class="num-card">
+          <div class="label">Submission Attempts</div>
+          <div class="number">3.4 <small>per match</small></div>
+          <div class="desc">Finish rate: 86%</div>
+        </div>
+        <div class="num-card">
+          <div class="label">Guard Passing Defense</div>
+          <div class="number">89% <small>retained</small></div>
+          <div class="desc">Avg. time in bottom guard: 2:10</div>
+        </div>
+        <div class="num-card">
+          <div class="label">Time to Submission</div>
+          <div class="number">3:12 <small>avg</small></div>
+          <div class="desc">Fastest finish: 0:48</div>
+        </div>
+        <div class="num-card">
+          <div class="label">Match Finish Rate</div>
+          <div class="number">86% <small>finishes</small></div>
+          <div class="desc">19 Sub · 2 Points · 1 DQ loss</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCOUTING REPORT -->
+    <section>
+      <div class="sec-head">
+        <span class="sec-num">04</span>
+        <h2 class="sec-title">Scouting Report</h2>
+      </div>
+      <div class="report">
+        <span class="stamp">Approved</span>
+        <p>A patient, technical grappler who wins the small battles — grips, frames, angles — long before he hunts the finish. Comfortable playing guard or passing it, with a leg lock game that punishes anyone who gets careless with their feet.</p>
+        <p>"Fear is the thief of our dreams" isn't just a caption — it's the approach: calm under pressure, methodical in the scramble, and never the one who taps first out of panic.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>Podium · Ragnar Fighter Profile</footer>
+
+</body>
+</html>
