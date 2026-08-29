@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="config.js"></script>
   <style>
     * {
@@ -687,6 +688,131 @@
       margin-bottom: 4px;
     }
 
+    /* ---------- USDT ADDRESS VIEW ---------- */
+    .pay-address-view {
+      display: none;
+    }
+    .pay-address-view.active {
+      display: block;
+    }
+    .pay-network-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--amber);
+      border: 1px solid rgba(245, 185, 66, 0.35);
+      background: rgba(245, 185, 66, 0.08);
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .pay-qr-box {
+      width: 168px;
+      height: 168px;
+      margin: 0 auto 18px;
+      background: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .pay-qr-box canvas, .pay-qr-box img {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .pay-address-amount {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .pay-address-amount span {
+      color: var(--text-faint);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      display: block;
+      margin-top: 2px;
+    }
+    .pay-address-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--line-bright);
+      border-radius: 8px;
+      padding: 12px 12px;
+      margin: 18px 0 8px;
+    }
+    .pay-address-text {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      word-break: break-all;
+      text-align: left;
+    }
+    .pay-copy-btn {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: rgba(33, 224, 138, 0.1);
+      border: 1px solid rgba(33, 224, 138, 0.3);
+      padding: 8px 10px;
+      border-radius: 6px;
+      transition: background .15s ease;
+    }
+    .pay-copy-btn:hover {
+      background: rgba(33, 224, 138, 0.2);
+    }
+    .pay-copy-btn.copied {
+      color: var(--text);
+      border-color: var(--line-bright);
+      background: var(--card-hover);
+    }
+    .pay-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      text-align: left;
+      background: rgba(255, 68, 51, 0.08);
+      border: 1px solid rgba(255, 68, 51, 0.3);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .pay-warning b {
+      color: var(--red);
+    }
+    .pay-sent-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+    .pay-back-btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 13px;
+      background: transparent;
+      color: var(--text-faint);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .pay-back-btn:hover {
+      color: var(--text-dim);
+      border-color: var(--line-bright);
+    }
+
     /* ---------- TOKEN MODAL ---------- */
     .modal-overlay {
       display: none;
@@ -1029,9 +1155,28 @@
 
         <textarea class="pay-message" id="pay-message" rows="2" placeholder="Add a message (optional)"></textarea>
 
-        <button class="btn btn-primary pay-submit-btn" id="pay-submit-btn">Pay $5</button>
+        <button class="btn btn-primary pay-submit-btn" id="pay-submit-btn">Donate $5</button>
         <div class="pay-recipient" id="pay-recipient">Going to Ragnar · Reel 1</div>
-        <div class="pay-demo-note">Demo mode — payment is simulated, no funds are moved.</div>
+        <div class="pay-demo-note">Confirmation is simulated for this demo — the address below is real.</div>
+      </div>
+
+      <!-- USDT ADDRESS / QR VIEW -->
+      <div class="pay-address-view" id="pay-address-view">
+        <span class="pay-network-badge">🅣 USDT</span>
+        <div class="pay-qr-box" id="pay-qr-box"></div>
+        <div class="pay-address-amount" id="pay-address-amount">$5 USDT
+          <span id="pay-address-context">to Ragnar · Reel 1</span>
+        </div>
+        <div class="pay-address-box">
+          <div class="pay-address-text" id="pay-address-text">0xdf7b7056051eeda2598f3fee346d4249e825d6f9</div>
+          <button class="pay-copy-btn" id="pay-copy-btn">Copy</button>
+        </div>
+        <div class="pay-warning">
+          <span>⚠️</span>
+          <span>Send <b>only USDT</b> to this address, and double-check the network matches your wallet before sending. Sending the wrong asset or wrong network can result in permanent loss of funds.</span>
+        </div>
+        <button class="btn btn-primary pay-sent-btn" id="pay-sent-btn">I've Sent It</button>
+        <button class="pay-back-btn" id="pay-back-btn">Back</button>
       </div>
 
       <!-- PROCESSING VIEW -->
@@ -1183,6 +1328,7 @@
       const closeBtn = document.getElementById('pay-modal-close');
 
       const formView = document.getElementById('pay-form-view');
+      const addressView = document.getElementById('pay-address-view');
       const processingView = document.getElementById('pay-processing-view');
       const successView = document.getElementById('pay-success-view');
 
@@ -1197,9 +1343,24 @@
       const successAmount = document.getElementById('pay-success-amount');
       const successRecipient = document.getElementById('pay-success-recipient');
 
-      const creatorName = 'Ragnar';
+      const qrBox = document.getElementById('pay-qr-box');
+      const addressAmountEl = document.getElementById('pay-address-amount');
+      const addressContextEl = document.getElementById('pay-address-context');
+      const addressTextEl = document.getElementById('pay-address-text');
+      const copyBtn = document.getElementById('pay-copy-btn');
+      const sentBtn = document.getElementById('pay-sent-btn');
+      const backBtn = document.getElementById('pay-back-btn');
+
+      // Pull creator + donation settings from config.js when available, so
+      // this same template can be reused across different creators without
+      // touching the code — just point ATHLETE_CONFIG at their own details.
+      const cfg = window.ATHLETE_CONFIG || {};
+      const creatorName = cfg.creatorName || 'Ragnar';
+      const usdtAddress = cfg.usdtAddress || '0xdf7b7056051eeda2598f3fee346d4249e825d6f9';
+
       let selectedAmount = 5;
       let currentReel = 1;
+      let qrInstance = null;
 
       const presets = {
         coffee: { icon: '☕', title: 'Buy a Coffee', sub: `Support ${creatorName}'s reels with a quick tip.`, amounts: [3, 5, 10, 25] },
@@ -1207,7 +1368,7 @@
       };
 
       function setActiveView(view) {
-        [formView, processingView, successView].forEach(v => v.classList.remove('active'));
+        [formView, addressView, processingView, successView].forEach(v => v.classList.remove('active'));
         view.classList.add('active');
       }
 
@@ -1225,7 +1386,22 @@
       }
 
       function updateSubmitLabel() {
-        submitBtn.textContent = 'Pay $' + selectedAmount;
+        submitBtn.textContent = 'Donate $' + selectedAmount;
+      }
+
+      function renderQr(address) {
+        qrBox.innerHTML = '';
+        if (window.QRCode) {
+          qrInstance = new QRCode(qrBox, {
+            text: address,
+            width: 148,
+            height: 148,
+            colorDark: '#0B0E13',
+            colorLight: '#ffffff'
+          });
+        } else {
+          qrBox.textContent = 'QR unavailable';
+        }
       }
 
       function openPayModal(type, reelNum) {
@@ -1246,8 +1422,19 @@
       function closePayModal() {
         overlay.classList.remove('open');
         document.body.style.overflow = '';
-        // reset back to form view after the close animation would run
-        setTimeout(() => setActiveView(formView), 200);
+        setTimeout(() => {
+          setActiveView(formView);
+          copyBtn.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 200);
+      }
+
+      function showAddressStep() {
+        addressAmountEl.childNodes[0].textContent = '$' + selectedAmount + ' USDT ';
+        addressContextEl.textContent = `to ${creatorName} · Reel ${currentReel}`;
+        addressTextEl.textContent = usdtAddress;
+        renderQr(usdtAddress);
+        setActiveView(addressView);
       }
 
       // Delegate clicks from dynamically-rendered reel cards
@@ -1278,15 +1465,40 @@
         }
       });
 
+      // Step 1 -> Step 2: show the USDT address + QR code for the chosen amount
       submitBtn.addEventListener('click', function() {
         if (!selectedAmount || selectedAmount <= 0) return;
+        showAddressStep();
+      });
+
+      backBtn.addEventListener('click', function() {
+        setActiveView(formView);
+      });
+
+      copyBtn.addEventListener('click', function() {
+        navigator.clipboard.writeText(usdtAddress).then(() => {
+          copyBtn.textContent = 'Copied!';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy';
+            copyBtn.classList.remove('copied');
+          }, 1800);
+        }).catch(() => {
+          copyBtn.textContent = 'Select & copy manually';
+        });
+      });
+
+      // Step 2 -> "I've sent it": this is a SIMULATED confirmation only.
+      // A real integration needs to verify the transaction on-chain
+      // (e.g. via a block explorer API or a webhook from Bybit) before
+      // showing success — never treat a user's click alone as proof of payment.
+      sentBtn.addEventListener('click', function() {
         setActiveView(processingView);
-        // Simulated processing delay — replace with a real API call/response.
         setTimeout(() => {
-          successAmount.textContent = '$' + selectedAmount;
+          successAmount.textContent = '$' + selectedAmount + ' USDT';
           successRecipient.textContent = `sent to ${creatorName} · Reel ${currentReel}`;
           setActiveView(successView);
-        }, 1600);
+        }, 1800);
       });
 
       closeBtn.addEventListener('click', closePayModal);
