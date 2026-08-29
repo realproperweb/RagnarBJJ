@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ragnar — Podium</title>
+  <meta name="description" content="Ragnar's reel channel on Podium." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="config.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --bg: #0B0E13;
+      --bg-elevated: #10141B;
+      --card: #161B23;
+      --card-hover: #1B212B;
+      --line: #262C37;
+      --line-bright: #343C4A;
+      --text: #EDEFF3;
+      --text-dim: #939BAB;
+      --text-faint: #5C6472;
+      --green: #21E08A;
+      --red: #FF4433;
+      --amber: #F5B942;
+      --display: 'Big Shoulders Display', sans-serif;
+      --body: 'Inter', sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+    }
+    :focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ---------- BANNER ---------- */
+    .hero-banner {
+      width: 100%;
+      height: 220px;
+      background: url('bgbanner.jpg') center/cover no-repeat;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(11,14,19,0.4) 0%, rgba(11,14,19,0.7) 100%);
+      pointer-events: none;
+    }
+
+    /* ---------- STATIC AD BANNER (image, no scroll/animation, no click-through) ---------- */
+    .ad-banner-static {
+      width: 100%;
+      display: block;
+      border-bottom: 1px solid var(--line);
+      line-height: 0;
+    }
+    .ad-banner-static img {
+      width: 100%;
+      height: auto;
+      max-height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ---------- HEADER ---------- */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 14, 19, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav.wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--green);
+      color: #06140D;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      background: #3CEB9E;
+    }
+    .btn-ghost {
+      border-color: var(--line-bright);
+      color: var(--text);
+    }
+    .btn-ghost:hover {
+      border-color: var(--text-dim);
+    }
+
+    /* ---------- PROFILE ROW ---------- */
+    .profile-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 26px;
+      margin-top: -64px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+    .avatar {
+      width: 132px;
+      height: 132px;
+      border-radius: 16px;
+      background: var(--bg-elevated);
+      border: 3px solid var(--bg);
+      outline: 1px solid var(--line-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .profile-meta {
+      flex: 1;
+      min-width: 260px;
+      padding-bottom: 4px;
+    }
+    .profile-name {
+      font-family: var(--display);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .verified {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #06140D;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .profile-tag {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--green);
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+    }
+    .profile-stats {
+      display: flex;
+      gap: 22px;
+      margin-top: 14px;
+      font-size: 13.5px;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+    }
+    .profile-stats b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .about-strip {
+      padding: 22px 0 26px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-dim);
+      font-size: 14.5px;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+    .about-strip .badge-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--line-bright);
+      color: var(--text-faint);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .contact-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--text);
+      border: 1px solid var(--line-bright);
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: border-color .15s ease, color .15s ease;
+    }
+    .contact-link:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* ---------- SECTION ---------- */
+    .section-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 36px 0 20px;
+    }
+    .section-bar h2 {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 26px;
+      text-transform: uppercase;
+    }
+    .reel-count {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--text-faint);
+    }
+
+    /* ---------- VIDEO GRID ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      padding-bottom: 80px;
+    }
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+        margin: 0 auto;
+      }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--line-bright);
+    }
+    .thumb {
+      position: relative;
+      aspect-ratio: 267/476;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .thumb iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .thumb .idx {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      background: rgba(0, 0, 0, 0.55);
+      padding: 3px 7px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .card-info {
+      padding: 12px 14px 14px;
+    }
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+    }
+    .fb-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--green);
+      border: 1px solid rgba(33, 224, 138, 0.25);
+      background: rgba(33, 224, 138, 0.08);
+      padding: 6px 10px;
+      border-radius: 5px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .fb-link:hover {
+      background: rgba(33, 224, 138, 0.16);
+      border-color: rgba(33, 224, 138, 0.4);
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--text-dim);
+      font-family: var(--body);
+    }
+    .loading-state .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--line);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .error-state {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--text-dim);
+    }
+    .error-state p {
+      margin-bottom: 16px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--text-faint);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AD BANNER (static image, no animation, no click-through) -->
+  <div class="ad-banner-static">
+    <img src="bgadbanner.jpg" alt="Sponsored" />
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <nav class="wrap">
+      <a href="https://www.facebook.com/profile.php?id=61575924220121" class="logo"><span class="dot"></span>PODIUM</a>
+      <div style="display:flex;gap:12px;">
+        <a href="https://www.instagram.com/ragnar_bjj" class="btn btn-ghost">INSTAGRAM</a>
+        <a href="https://www.facebook.com/profile.php?id=61575924220121" class="btn btn-primary">Follow</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner"></div>
+
+  <div class="wrap">
+    <!-- PROFILE ROW -->
+    <div class="profile-row">
+      <div class="avatar">
+        <img src="avatar.jpg" alt="Ragnar avatar" />
+      </div>
+      <div class="profile-meta">
+        <div class="profile-name">Ragnar <span class="verified">✓</span></div>
+        <div class="profile-tag">BJJ BLACK BELT ⬛️⬛️⬛️⬜️🟥🟥🟥⬜️⬛️ · BJJ TRICKS &amp; TIPS</div>
+        <div class="profile-stats">
+          <span><b>6</b> reels</span>
+          <span><b>603K</b> followers</span>
+          <span><b>0</b> following</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="about-strip">
+      <p>Fear is the thief of our dreams 🙌 Norse mythology lover ⚔️</p>
+      <div class="badge-row">
+        <span class="badge">BJJ Black Belt</span>
+        <span class="badge">Podium Founding Athlete</span>
+        <span class="badge">Prague, Czech Republic</span>
+      </div>
+      <div class="contact-row">
+        <a class="contact-link" href="https://www.instagram.com/ragnar_bjj" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+        <a class="contact-link" href="mailto:bafiik@gmail.com">bafiik@gmail.com</a>
+        <a class="contact-link" href="https://www.facebook.com/profile.php?id=61575924220121" target="_blank" rel="noopener noreferrer">Facebook ↗</a>
+      </div>
+    </div>
+
+    <!-- REEL GRID -->
+    <div class="section-bar">
+      <h2>Reels</h2>
+      <span class="reel-count" id="reel-count"></span>
+    </div>
+    <div class="grid" id="video-grid">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading reels...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>PODIUM · RAGNAR CHANNEL · REELS EMBEDDED VIA FACEBOOK</footer>
+
+  <script>
+    (function() {
+      const grid = document.getElementById('video-grid');
+      const countDisplay = document.getElementById('reel-count');
+
+      // ---------- FETCH REEL IDS FROM GOOGLE SHEET (published CSV) ----------
+      // Expects a published "Reels" tab with one column, header "reel_id",
+      // one Facebook reel ID per row below it.
+      async function fetchReelIds() {
+        const csvUrl = window.ATHLETE_CONFIG && window.ATHLETE_CONFIG.reelsCsvUrl;
+        if (!csvUrl) {
+          throw new Error('No reelsCsvUrl configured in config.js');
+        }
+        const res = await fetch(csvUrl, { cache: 'no-store' });
+        if (!res.ok) {
+          throw new Error('Failed to fetch reels sheet: ' + res.status);
+        }
+        const csvText = await res.text();
+        return csvText
+          .split(/\r?\n/)
+          .slice(1) // drop header row
+          .map(row => row.split(',')[0].trim().replace(/^"|"$/g, ''))
+          .filter(id => id.length > 0);
+      }
+
+      function renderReels(reelIds) {
+        grid.innerHTML = '';
+        if (countDisplay) {
+          countDisplay.textContent = reelIds.length + ' REELS';
+        }
+        if (reelIds.length === 0) {
+          grid.innerHTML = '<div class="error-state"><p>No reels available.</p></div>';
+          return;
+        }
+        const fragment = document.createDocumentFragment();
+        reelIds.forEach((id, i) => {
+          const href = encodeURIComponent(`https://www.facebook.com/reel/${id}/`);
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="thumb">
+              <span class="idx">REEL ${String(i + 1).padStart(2, '0')}</span>
+              <iframe src="https://www.facebook.com/plugins/video.php?height=476&href=${href}&show_text=false&width=267&t=0"
+                scrolling="no" frameborder="0" allowfullscreen="true"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                loading="lazy"
+                title="Ragnar Reel ${i + 1}"></iframe>
+            </div>
+            <div class="card-info">
+              <div class="card-title">Ragnar — Reel ${i + 1}</div>
+              <div class="card-meta">facebook.com/reel/${id}</div>
+              <a class="fb-link" href="https://www.facebook.com/reel/${id}/" target="_blank" rel="noopener noreferrer">Watch on Facebook ↗</a>
+            </div>
+          `;
+          fragment.appendChild(card);
+        });
+        grid.appendChild(fragment);
+      }
+
+      fetchReelIds()
+        .then(renderReels)
+        .catch(err => {
+          console.warn('Reel sheet load failed:', err);
+          grid.innerHTML = '<div class="error-state"><p>Couldn\'t load reels right now. Please try again shortly.</p></div>';
+          if (countDisplay) countDisplay.textContent = '';
+        });
+
+      // silence iframe errors
+      window.addEventListener('error', function(e) {
+        if (e.target.tagName === 'IFRAME') {
+          console.warn('Facebook embed may have failed:', e.target.src);
+        }
+      }, true);
+    })();
+  </script>
+</body>
+</html>
