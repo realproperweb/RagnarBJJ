@@ -15,15 +15,15 @@
 window.ATHLETE_CONFIG = {
   platforms: {
     facebook: {
-      csvUrl: 'PASTE_FACEBOOK_SHEET_CSV_LINK_HERE',
+      csvUrl: 'https://docs.google.com/spreadsheets/d/1UStedFKAvRsfg6A2gjoaGOXLxyIS1fwQkin8e30wuyw/edit?usp=sharing',
       profileUrl: 'https://www.facebook.com/profile.php?id=61575924220121'
     },
     tiktok: {
-      csvUrl: 'PASTE_TIKTOK_SHEET_CSV_LINK_HERE',
+      csvUrl: 'https://docs.google.com/spreadsheets/d/1nchstJRTBVpaE3CfvHsmH1xBlzb6SGKCZ2KLE7AprHk/edit?usp=sharing',
       profileUrl: 'https://www.tiktok.com/@ragnar_bjj'
     },
     youtube: {
-      csvUrl: 'PASTE_YOUTUBE_SHEET_CSV_LINK_HERE',
+      csvUrl: 'https://docs.google.com/spreadsheets/d/1t7dyhDtCOSzjRFFmv3XUghAyoRwn93mW5mAOKlFdxw0/edit?usp=sharing',
       profileUrl: 'https://www.youtube.com/@ragnar_bjj'
     }
   }
