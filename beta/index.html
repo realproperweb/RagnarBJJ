@@ -1,30 +1,931 @@
-// =====================================================================
-// ATHLETE CONFIG
-// =====================================================================
-// For each platform, publish a Google Sheet tab to the web as CSV:
-//   File → Share → Publish to web → select the tab → CSV → Publish
-// Paste that CSV link below as csvUrl.
-//
-// Each sheet needs ONE column of data with a header row:
-//   - Recommended header: "url"      → paste the full post/video link
-//   - Also supported:      "reel_id" → paste just the numeric/alphanumeric ID
-//
-// profileUrl is optional — if set, it adds a link chip under the bio.
-// =====================================================================
-
-window.ATHLETE_CONFIG = {
-  platforms: {
-    facebook: {
-      csvUrl: 'PASTE_FACEBOOK_SHEET_CSV_LINK_HERE',
-      profileUrl: 'https://www.facebook.com/profile.php?id=61575924220121'
-    },
-    tiktok: {
-      csvUrl: 'PASTE_TIKTOK_SHEET_CSV_LINK_HERE',
-      profileUrl: 'https://www.tiktok.com/@ragnar_bjj'
-    },
-    youtube: {
-      csvUrl: 'PASTE_YOUTUBE_SHEET_CSV_LINK_HERE',
-      profileUrl: 'https://www.youtube.com/@ragnar_bjj'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ragnar — Podium</title>
+  <meta name="description" content="Ragnar's reel channel on Podium." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="config.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  }
-};
+    :root {
+      --bg: #0B0E13;
+      --bg-elevated: #10141B;
+      --card: #161B23;
+      --card-hover: #1B212B;
+      --line: #262C37;
+      --line-bright: #343C4A;
+      --text: #EDEFF3;
+      --text-dim: #939BAB;
+      --text-faint: #5C6472;
+      --green: #21E08A;
+      --red: #FF4433;
+      --amber: #F5B942;
+      --display: 'Big Shoulders Display', sans-serif;
+      --body: 'Inter', sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+    :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+    /* ---------- BANNER ---------- */
+    .hero-banner {
+      width: 100%;
+      height: 220px;
+      background: url('bgbanner.jpg') center/cover no-repeat;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(11,14,19,0.4) 0%, rgba(11,14,19,0.7) 100%);
+      pointer-events: none;
+    }
+
+    /* ---------- AD BANNER ---------- */
+    .ad-banner-gradient {
+      width: 100%;
+      padding: 20px 32px;
+      background: linear-gradient(115deg, #0C2A20 0%, #0F4B36 35%, #0B0E13 100%);
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+    .ad-banner-gradient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 85% 50%, rgba(33,224,138,0.18), transparent 60%);
+      pointer-events: none;
+    }
+    .ad-banner-content {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .ad-banner-text { display: flex; flex-direction: column; gap: 4px; }
+    .ad-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .ad-banner-text h3 {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(18px, 2.4vw, 22px);
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+    .ad-read-more { flex-shrink: 0; }
+
+    /* ---------- HEADER ---------- */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 14, 19, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav.wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { font-family: var(--display); font-weight: 800; font-size: 24px; display: flex; align-items: center; gap: 8px; }
+    .logo .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--green); color: #06140D; }
+    .btn-primary:hover { transform: translateY(-1px); background: #3CEB9E; }
+    .btn-ghost { border-color: var(--line-bright); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--text-dim); }
+
+    /* ---------- PROFILE ROW ---------- */
+    .profile-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 26px;
+      margin-top: -64px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+    .avatar {
+      width: 132px;
+      height: 132px;
+      border-radius: 16px;
+      background: var(--bg-elevated);
+      border: 3px solid var(--bg);
+      outline: 1px solid var(--line-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .profile-meta { flex: 1; min-width: 260px; padding-bottom: 4px; }
+    .profile-name {
+      font-family: var(--display);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .verified {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #06140D;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .profile-tag { font-family: var(--mono); font-size: 13px; color: var(--green); margin-top: 8px; letter-spacing: 0.04em; }
+    .profile-stats { display: flex; gap: 22px; margin-top: 14px; font-size: 13.5px; color: var(--text-dim); flex-wrap: wrap; }
+    .profile-stats b { color: var(--text); font-weight: 600; }
+
+    .about-strip {
+      padding: 22px 0 26px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-dim);
+      font-size: 14.5px;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+    .about-strip .badge-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .badge {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--line-bright);
+      color: var(--text-faint);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    .contact-row { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--text);
+      border: 1px solid var(--line-bright);
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: border-color .15s ease, color .15s ease;
+    }
+    .contact-link:hover { border-color: var(--green); color: var(--green); }
+
+    /* ---------- SECTION / PLATFORM TABS ---------- */
+    .section-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 36px 0 20px;
+      flex-wrap: wrap;
+    }
+    .section-bar h2 {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 26px;
+      text-transform: uppercase;
+    }
+    .reel-count { font-family: var(--mono); font-size: 12.5px; color: var(--text-faint); white-space: nowrap; }
+
+    .platform-tabs {
+      display: inline-flex;
+      gap: 4px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 4px;
+    }
+    .platform-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      transition: background .15s ease, color .15s ease;
+    }
+    .platform-tab .tab-count {
+      font-size: 10.5px;
+      color: inherit;
+      opacity: 0.65;
+    }
+    .platform-tab:hover:not(.active) { color: var(--text); }
+    .platform-tab.active { background: var(--green); color: #06140D; font-weight: 700; }
+    .platform-tab.active .tab-count { color: #06140D; opacity: 0.75; }
+
+    /* ---------- VIDEO GRID ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; max-width: 280px; margin: 0 auto; }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--line-bright); }
+    .thumb {
+      position: relative;
+      aspect-ratio: 267/476;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .thumb iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .thumb .idx {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      background: rgba(0, 0, 0, 0.55);
+      padding: 3px 7px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .thumb .plat-chip {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(0, 0, 0, 0.55);
+      padding: 3px 7px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .card-info { padding: 12px 14px 14px; }
+    .card-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+    .card-meta { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-bottom: 10px; word-break: break-all; }
+    .platform-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--green);
+      border: 1px solid rgba(33, 224, 138, 0.25);
+      background: rgba(33, 224, 138, 0.08);
+      padding: 6px 10px;
+      border-radius: 5px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .platform-link:hover { background: rgba(33, 224, 138, 0.16); border-color: rgba(33, 224, 138, 0.4); }
+
+    /* ---------- PAGINATION ---------- */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 32px 0 80px;
+      flex-wrap: wrap;
+    }
+    .page-btn {
+      min-width: 38px;
+      height: 38px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 7px;
+      border: 1px solid var(--line-bright);
+      background: var(--card);
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+    .page-btn:hover:not(.active):not(:disabled) { border-color: var(--text-dim); color: var(--text); }
+    .page-btn.active { background: var(--green); color: #06140D; border-color: var(--green); font-weight: 700; }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .page-ellipsis { color: var(--text-faint); font-family: var(--mono); font-size: 12.5px; padding: 0 4px; }
+
+    .loading-state { text-align: center; padding: 60px 0; color: var(--text-dim); font-family: var(--body); grid-column: 1 / -1; }
+    .loading-state .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--line);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-state { text-align: center; padding: 60px 0; color: var(--text-dim); grid-column: 1 / -1; }
+    .error-state p { margin-bottom: 8px; }
+    .error-state .hint { font-family: var(--mono); font-size: 11.5px; color: var(--text-faint); }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 32px 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--text-faint);
+    }
+
+    /* ---------- TOKEN MODAL ---------- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(6, 8, 11, 0.75);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--bg-elevated);
+      border: 1px solid var(--line-bright);
+      border-radius: 16px;
+      position: relative;
+      box-shadow: 0 30px 70px -20px rgba(0,0,0,0.7);
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--line-bright);
+      color: var(--text-dim);
+      font-size: 18px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, border-color .15s ease;
+    }
+    .modal-close:hover { color: var(--text); border-color: var(--green); }
+    .modal-header {
+      padding: 32px 28px 20px;
+      background: linear-gradient(135deg, #0C2A20 0%, #10141B 70%);
+      border-bottom: 1px solid var(--line);
+      border-radius: 16px 16px 0 0;
+    }
+    .modal-header h2 { font-family: var(--display); font-weight: 800; font-size: 34px; text-transform: uppercase; margin-top: 8px; }
+    .modal-sub { color: var(--text-dim); font-size: 13.5px; margin-top: 6px; }
+    .modal-body { padding: 26px 28px 30px; }
+    .progress-section { margin-bottom: 24px; }
+    .progress-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+    .progress-label span:last-child { color: var(--green); font-weight: 600; }
+    .progress-track { width: 100%; height: 10px; background: var(--card); border: 1px solid var(--line-bright); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #21E08A, #3CEB9E); border-radius: 999px; transition: width .3s ease; }
+    .progress-meta { margin-top: 8px; font-family: var(--mono); font-size: 11.5px; color: var(--text-faint); }
+    .modal-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 22px; }
+    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+    .stat-label { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-faint); }
+    .stat-value { font-size: 15px; font-weight: 600; }
+    .modal-desc { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+    .modal-whitelist-btn { width: 100%; padding: 14px 20px; font-size: 15px; }
+    .whitelist-form { display: none; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .whitelist-form.open { display: flex; }
+    .whitelist-form input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--card);
+      border: 1px solid var(--line-bright);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 14px;
+    }
+    .whitelist-form input:focus { border-color: var(--green); }
+    .whitelist-note { font-size: 12px; color: var(--text-faint); margin-top: 4px; }
+    .whitelist-success { display: none; align-items: center; gap: 8px; font-size: 13.5px; color: var(--green); margin-top: 14px; }
+    .whitelist-success.open { display: flex; }
+  </style>
+</head>
+<body>
+
+  <!-- AD BANNER -->
+  <div class="ad-banner-gradient">
+    <div class="ad-banner-content">
+      <div class="ad-banner-text">
+        <span class="ad-tag">Sponsored · Token Launch</span>
+        <h3>Introducing $RAGNAR — The Fighter's Token</h3>
+      </div>
+      <button class="btn btn-primary ad-read-more" id="open-token-modal">Read More</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <nav class="wrap">
+      <a href="https://www.facebook.com/profile.php?id=61575924220121" class="logo"><span class="dot"></span>PODIUM</a>
+      <div style="display:flex;gap:12px;">
+        <a href="https://www.instagram.com/ragnar_bjj" class="btn btn-ghost">INSTAGRAM</a>
+        <a href="https://www.facebook.com/profile.php?id=61575924220121" class="btn btn-primary">Follow</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner"></div>
+
+  <div class="wrap">
+    <!-- PROFILE ROW -->
+    <div class="profile-row">
+      <div class="avatar">
+        <img src="avatar.jpg" alt="Ragnar avatar" />
+      </div>
+      <div class="profile-meta">
+        <div class="profile-name">Ragnar <span class="verified">✓</span></div>
+        <div class="profile-tag">BJJ BLACK BELT ⬛️⬛️⬛️⬜️🟥🟥🟥⬜️⬛️ · BJJ TRICKS &amp; TIPS</div>
+        <div class="profile-stats">
+          <span><b id="stat-total-count">—</b> reels</span>
+          <span><b>603K</b> followers</span>
+          <span><b>0</b> following</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="about-strip">
+      <p>Fear is the thief of our dreams 🙌 Norse mythology lover ⚔️</p>
+      <div class="badge-row">
+        <span class="badge">BJJ Black Belt</span>
+        <span class="badge">Podium Founding Athlete</span>
+        <span class="badge">Prague, Czech Republic</span>
+      </div>
+      <div class="contact-row" id="contact-row">
+        <a class="contact-link" href="https://www.instagram.com/ragnar_bjj" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+        <a class="contact-link" href="mailto:bafiik@gmail.com">bafiik@gmail.com</a>
+      </div>
+    </div>
+
+    <!-- PLATFORM TABS + GRID -->
+    <div class="section-bar">
+      <h2 id="section-title">Reels</h2>
+      <div class="platform-tabs" id="platform-tabs" role="tablist"></div>
+      <span class="reel-count" id="reel-count"></span>
+    </div>
+    <div class="grid" id="video-grid">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading reels...</p>
+      </div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <footer>PODIUM · RAGNAR CHANNEL · REELS EMBEDDED VIA FACEBOOK, TIKTOK &amp; YOUTUBE</footer>
+
+  <!-- TOKEN MODAL -->
+  <div class="modal-overlay" id="token-modal-overlay">
+    <div class="modal">
+      <button class="modal-close" id="close-token-modal" aria-label="Close">&times;</button>
+      <div class="modal-header">
+        <span class="ad-tag">Token Launch</span>
+        <h2>$RAGNAR</h2>
+        <p class="modal-sub">A community token for the Podium fighter's ecosystem.</p>
+      </div>
+      <div class="modal-body">
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>Presale Progress</span>
+            <span id="progress-percent">62%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width:62%"></div>
+          </div>
+          <div class="progress-meta">620,000 / 1,000,000 USDC raised · Whitelist closes soon</div>
+        </div>
+
+        <div class="modal-stats">
+          <div class="stat"><span class="stat-label">Network</span><span class="stat-value">Base</span></div>
+          <div class="stat"><span class="stat-label">Total Supply</span><span class="stat-value">100,000,000</span></div>
+          <div class="stat"><span class="stat-label">Whitelist Slots</span><span class="stat-value">2,500</span></div>
+          <div class="stat"><span class="stat-label">Launch Window</span><span class="stat-value">TBA</span></div>
+        </div>
+
+        <p class="modal-desc">
+          $RAGNAR is being built as a rewards and access token for Podium's athlete channels —
+          unlocking exclusive drops, training content, and community perks. This page is a
+          placeholder template: replace the copy, stats, and progress numbers with your
+          project's real details before publishing, and connect the form below to your actual
+          signup backend.
+        </p>
+
+        <button class="btn btn-primary modal-whitelist-btn" id="get-whitelisted-btn">Get Whitelisted</button>
+
+        <form class="whitelist-form" id="whitelist-form">
+          <input type="email" id="whitelist-email" placeholder="Email address" required autocomplete="email" />
+          <input type="text" id="whitelist-wallet" placeholder="Wallet address (optional)" autocomplete="off" />
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <p class="whitelist-note">We'll only use this to notify you about whitelist status. No purchase or payment is required to join.</p>
+        </form>
+
+        <div class="whitelist-success" id="whitelist-success">✓ You're on the list — check your email for confirmation.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // MULTI-PLATFORM REEL GRID (Facebook / TikTok / YouTube)
+    // =====================================================================
+    // Data source: each platform is a separate published Google Sheet CSV,
+    // configured in config.js as window.ATHLETE_CONFIG.platforms.{platform}.csvUrl
+    // Each sheet needs one column. Header can be "url" (paste the full post
+    // link — recommended) or "reel_id" (paste just the ID) for backwards
+    // compatibility with the old Facebook-only sheet.
+    // =====================================================================
+    (function () {
+      const PER_PAGE = 9;
+
+      const PLATFORMS = {
+        facebook: { label: 'Facebook', sectionTitle: 'Reels' },
+        tiktok:   { label: 'TikTok',   sectionTitle: 'Videos' },
+        youtube:  { label: 'YouTube',  sectionTitle: 'Videos' }
+      };
+      const PLATFORM_ORDER = ['facebook', 'tiktok', 'youtube'];
+
+      const grid = document.getElementById('video-grid');
+      const countDisplay = document.getElementById('reel-count');
+      const sectionTitle = document.getElementById('section-title');
+      const tabsEl = document.getElementById('platform-tabs');
+      const paginationEl = document.getElementById('pagination');
+      const totalCountStat = document.getElementById('stat-total-count');
+      const contactRow = document.getElementById('contact-row');
+
+      const cfg = (window.ATHLETE_CONFIG && window.ATHLETE_CONFIG.platforms) || {};
+
+      const state = {
+        active: 'facebook',
+        page: 1,
+        items: { facebook: null, tiktok: null, youtube: null }, // null = not loaded yet
+        error: { facebook: null, tiktok: null, youtube: null }
+      };
+
+      // ---------- CSV fetch + parse ----------
+      function parseCsv(csvText) {
+        const rows = csvText.split(/\r?\n/).filter(r => r.trim().length > 0);
+        if (rows.length === 0) return [];
+        const header = rows[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+        const col = header.indexOf('url') !== -1 ? header.indexOf('url') : header.indexOf('reel_id');
+        if (col === -1) return [];
+        return rows.slice(1)
+          .map(row => row.split(',')[col])
+          .filter(Boolean)
+          .map(v => v.trim().replace(/^"|"$/g, ''))
+          .filter(v => v.length > 0);
+      }
+
+      async function fetchPlatform(platform) {
+        const csvUrl = cfg[platform] && cfg[platform].csvUrl;
+        if (!csvUrl) {
+          throw new Error(`No csvUrl configured for "${platform}" in config.js`);
+        }
+        const res = await fetch(csvUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to fetch sheet: ' + res.status);
+        const csvText = await res.text();
+        return parseCsv(csvText);
+      }
+
+      // ---------- ID / URL extraction per platform ----------
+      function toFacebookEntry(raw) {
+        let id = raw;
+        const m = raw.match(/facebook\.com\/reel\/(\d+)/) || raw.match(/\/videos\/(\d+)/);
+        if (m) id = m[1];
+        const watchUrl = /facebook\.com/.test(raw) ? raw : `https://www.facebook.com/reel/${id}/`;
+        return { id, watchUrl };
+      }
+
+      function toTikTokEntry(raw) {
+        let id = raw;
+        const m = raw.match(/video\/(\d+)/);
+        if (m) id = m[1];
+        const watchUrl = /tiktok\.com/.test(raw) ? raw : null;
+        return { id, watchUrl };
+      }
+
+      function toYouTubeEntry(raw) {
+        let id = raw;
+        const m = raw.match(/(?:v=|youtu\.be\/|shorts\/)([A-Za-z0-9_-]{11})/);
+        if (m) id = m[1];
+        const watchUrl = /youtu/.test(raw) ? raw : `https://www.youtube.com/watch?v=${id}`;
+        return { id, watchUrl };
+      }
+
+      function toEntry(platform, raw) {
+        if (platform === 'facebook') return toFacebookEntry(raw);
+        if (platform === 'tiktok') return toTikTokEntry(raw);
+        return toYouTubeEntry(raw);
+      }
+
+      // ---------- Card rendering per platform ----------
+      function embedMarkup(platform, entry, i) {
+        if (platform === 'facebook') {
+          const href = encodeURIComponent(entry.watchUrl);
+          return `<iframe src="https://www.facebook.com/plugins/video.php?height=476&href=${href}&show_text=false&width=267&t=0"
+              scrolling="no" frameborder="0" allowfullscreen="true"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              loading="lazy" title="Reel ${i + 1}"></iframe>`;
+        }
+        if (platform === 'tiktok') {
+          return `<iframe src="https://www.tiktok.com/embed/v2/${entry.id}"
+              scrolling="no" frameborder="0" allowfullscreen="true"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              loading="lazy" title="Video ${i + 1}"></iframe>`;
+        }
+        return `<iframe src="https://www.youtube.com/embed/${entry.id}"
+            frameborder="0" allowfullscreen="true"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            loading="lazy" title="Video ${i + 1}"></iframe>`;
+      }
+
+      function renderCard(platform, raw, indexOverall) {
+        const entry = toEntry(platform, raw);
+        const label = PLATFORMS[platform].label;
+        const card = document.createElement('div');
+        card.className = 'card';
+        const linkHtml = entry.watchUrl
+          ? `<a class="platform-link" href="${entry.watchUrl}" target="_blank" rel="noopener noreferrer">Watch on ${label} ↗</a>`
+          : `<span class="platform-link" style="opacity:.5;cursor:default;">No link provided</span>`;
+        card.innerHTML = `
+          <div class="thumb">
+            <span class="idx">${String(indexOverall + 1).padStart(2, '0')}</span>
+            <span class="plat-chip">${label}</span>
+            ${embedMarkup(platform, entry, indexOverall)}
+          </div>
+          <div class="card-info">
+            <div class="card-title">Ragnar — ${label} ${indexOverall + 1}</div>
+            <div class="card-meta">${entry.watchUrl ? entry.watchUrl : 'id: ' + entry.id}</div>
+            ${linkHtml}
+          </div>
+        `;
+        return card;
+      }
+
+      // ---------- Pagination ----------
+      function renderPagination(totalItems) {
+        paginationEl.innerHTML = '';
+        const totalPages = Math.max(1, Math.ceil(totalItems / PER_PAGE));
+        if (totalPages <= 1) return;
+
+        const makeBtn = (label, page, opts = {}) => {
+          const btn = document.createElement('button');
+          btn.className = 'page-btn' + (opts.active ? ' active' : '');
+          btn.textContent = label;
+          btn.disabled = !!opts.disabled;
+          btn.setAttribute('aria-label', opts.ariaLabel || `Page ${page}`);
+          if (!opts.disabled) {
+            btn.addEventListener('click', () => {
+              state.page = page;
+              renderActivePlatform();
+              window.scrollTo({ top: document.getElementById('video-grid').offsetTop - 90, behavior: 'smooth' });
+            });
+          }
+          return btn;
+        };
+
+        paginationEl.appendChild(makeBtn('‹', state.page - 1, { disabled: state.page === 1, ariaLabel: 'Previous page' }));
+
+        const addEllipsis = () => {
+          const span = document.createElement('span');
+          span.className = 'page-ellipsis';
+          span.textContent = '…';
+          paginationEl.appendChild(span);
+        };
+
+        const pages = new Set([1, totalPages, state.page, state.page - 1, state.page + 1]);
+        let prevPage = 0;
+        [...pages].filter(p => p >= 1 && p <= totalPages).sort((a, b) => a - b).forEach(p => {
+          if (prevPage && p - prevPage > 1) addEllipsis();
+          paginationEl.appendChild(makeBtn(String(p), p, { active: p === state.page }));
+          prevPage = p;
+        });
+
+        paginationEl.appendChild(makeBtn('›', state.page + 1, { disabled: state.page === totalPages, ariaLabel: 'Next page' }));
+      }
+
+      // ---------- Main render ----------
+      function renderActivePlatform() {
+        const platform = state.active;
+        const items = state.items[platform];
+        sectionTitle.textContent = PLATFORMS[platform].sectionTitle;
+
+        if (state.error[platform]) {
+          grid.innerHTML = `<div class="error-state"><p>Couldn't load ${PLATFORMS[platform].label} content.</p><p class="hint">${state.error[platform]}</p></div>`;
+          countDisplay.textContent = '';
+          paginationEl.innerHTML = '';
+          return;
+        }
+        if (items === null) {
+          grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Loading ${PLATFORMS[platform].label.toLowerCase()}...</p></div>`;
+          countDisplay.textContent = '';
+          paginationEl.innerHTML = '';
+          return;
+        }
+        if (items.length === 0) {
+          grid.innerHTML = '<div class="error-state"><p>No content available yet.</p></div>';
+          countDisplay.textContent = '0 ITEMS';
+          paginationEl.innerHTML = '';
+          return;
+        }
+
+        const totalPages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+        state.page = Math.min(Math.max(1, state.page), totalPages);
+        const start = (state.page - 1) * PER_PAGE;
+        const pageItems = items.slice(start, start + PER_PAGE);
+
+        grid.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        pageItems.forEach((raw, i) => fragment.appendChild(renderCard(platform, raw, start + i)));
+        grid.appendChild(fragment);
+
+        countDisplay.textContent = `${items.length} ITEM${items.length === 1 ? '' : 'S'} · PAGE ${state.page} OF ${totalPages}`;
+        renderPagination(items.length);
+        updateTotalStat();
+      }
+
+      function updateTotalStat() {
+        const loaded = PLATFORM_ORDER.map(p => state.items[p]).filter(Array.isArray);
+        if (loaded.length === 0) { totalCountStat.textContent = '—'; return; }
+        const total = loaded.reduce((sum, arr) => sum + arr.length, 0);
+        totalCountStat.textContent = total;
+      }
+
+      function renderTabs() {
+        tabsEl.innerHTML = '';
+        PLATFORM_ORDER.forEach(platform => {
+          const tab = document.createElement('button');
+          tab.className = 'platform-tab' + (platform === state.active ? ' active' : '');
+          tab.setAttribute('role', 'tab');
+          tab.setAttribute('aria-selected', platform === state.active ? 'true' : 'false');
+          const count = Array.isArray(state.items[platform]) ? state.items[platform].length : null;
+          tab.innerHTML = `${PLATFORMS[platform].label}${count !== null ? ` <span class="tab-count">${count}</span>` : ''}`;
+          tab.addEventListener('click', () => switchPlatform(platform));
+          tabsEl.appendChild(tab);
+        });
+      }
+
+      function switchPlatform(platform) {
+        if (platform === state.active) return;
+        state.active = platform;
+        state.page = 1;
+        renderTabs();
+        renderActivePlatform();
+        loadPlatform(platform); // no-op if already loaded/loading
+      }
+
+      async function loadPlatform(platform) {
+        if (state.items[platform] !== null || state.error[platform]) return; // already loaded / failed
+        try {
+          const raw = await fetchPlatform(platform);
+          state.items[platform] = raw;
+        } catch (err) {
+          console.warn(`${platform} sheet load failed:`, err);
+          state.error[platform] = err.message;
+        }
+        renderTabs();
+        if (state.active === platform) renderActivePlatform();
+        updateTotalStat();
+      }
+
+      function renderProfileLinks() {
+        PLATFORM_ORDER.forEach(platform => {
+          const url = cfg[platform] && cfg[platform].profileUrl;
+          if (!url) return;
+          const a = document.createElement('a');
+          a.className = 'contact-link';
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.textContent = `${PLATFORMS[platform].label} ↗`;
+          contactRow.appendChild(a);
+        });
+      }
+
+      // ---------- Init ----------
+      renderTabs();
+      renderProfileLinks();
+      renderActivePlatform();
+      loadPlatform(state.active); // load Facebook (default tab) first
+      // Load the other two in the background so tab counts + switching feel instant.
+      PLATFORM_ORDER.filter(p => p !== state.active).forEach(loadPlatform);
+
+      window.addEventListener('error', function (e) {
+        if (e.target.tagName === 'IFRAME') {
+          console.warn('Embed may have failed:', e.target.src);
+        }
+      }, true);
+    })();
+
+    // ---------- TOKEN MODAL LOGIC ----------
+    (function() {
+      const overlay = document.getElementById('token-modal-overlay');
+      const openBtn = document.getElementById('open-token-modal');
+      const closeBtn = document.getElementById('close-token-modal');
+      const whitelistBtn = document.getElementById('get-whitelisted-btn');
+      const whitelistForm = document.getElementById('whitelist-form');
+      const whitelistSuccess = document.getElementById('whitelist-success');
+
+      function openModal() { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function closeModal() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+      whitelistBtn.addEventListener('click', function() {
+        whitelistForm.classList.add('open');
+        whitelistBtn.style.display = 'none';
+      });
+
+      whitelistForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        whitelistForm.classList.remove('open');
+        whitelistSuccess.classList.add('open');
+      });
+    })();
+  </script>
+</body>
+</html>
