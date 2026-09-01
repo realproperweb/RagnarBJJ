@@ -813,6 +813,23 @@
       border-color: var(--line-bright);
     }
 
+    /* ---------- NOWPAYMENTS EMBED VIEW ---------- */
+    .pay-iframe-view {
+      display: none;
+    }
+    .pay-iframe-view.active {
+      display: block;
+    }
+    .pay-iframe-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    .pay-iframe-container iframe {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
     /* ---------- TOKEN MODAL ---------- */
     .modal-overlay {
       display: none;
@@ -1135,8 +1152,21 @@
     <div class="pay-modal">
       <button class="pay-modal-close" id="pay-modal-close" aria-label="Close">&times;</button>
 
-      <!-- FORM VIEW -->
-      <div class="pay-form-view active" id="pay-form-view">
+      <!-- NOWPAYMENTS EMBED VIEW (default view opened by Buy Coffee / Send Gift) -->
+      <div class="pay-iframe-view active" id="pay-iframe-view">
+        <div class="pay-icon" id="pay-iframe-icon">☕</div>
+        <h3 id="pay-iframe-title">Buy a Coffee</h3>
+        <p class="pay-modal-sub" id="pay-iframe-subtitle">Support Ragnar's reels with a quick tip.</p>
+        <div class="pay-iframe-container">
+          <iframe src="https://nowpayments.io/embeds/donation-widget?api_key=72b4ab08-3600-4f3b-ab24-890584403328" width="346" height="623" frameborder="0" scrolling="no" style="overflow-y: hidden;">
+            Can't load widget
+          </iframe>
+        </div>
+        <div class="pay-recipient" id="pay-iframe-recipient">Going to Ragnar · Reel 1</div>
+      </div>
+
+      <!-- FORM VIEW (kept in markup, unused now that NOWPayments embed is default) -->
+      <div class="pay-form-view" id="pay-form-view">
         <div class="pay-icon" id="pay-icon">☕</div>
         <h3 id="pay-title">Buy a Coffee</h3>
         <p class="pay-modal-sub" id="pay-subtitle">Support Ragnar's reels with a quick tip.</p>
@@ -1317,15 +1347,20 @@
       });
     })();
 
-    // ---------- SIMULATED PAYMENT MODAL (Buy Coffee / Send Gift) ----------
-    // NOTE: This is a front-end demo only. No real payment processor is
-    // connected. Wire the "confirm payment" step below up to a real
-    // provider (Stripe, PayPal, a crypto wallet, etc.) before going live,
-    // and never collect real card/wallet details in an unsecured form.
+    // ---------- PAYMENT MODAL (Buy Coffee / Send Gift) ----------
+    // Every support-row click now opens the NOWPayments donation widget
+    // embed directly. The older simulated USDT-address flow is kept in the
+    // markup/JS below (unused) in case you want to fall back to it.
     (function() {
       const grid = document.getElementById('video-grid');
       const overlay = document.getElementById('pay-modal-overlay');
       const closeBtn = document.getElementById('pay-modal-close');
+
+      const iframeView = document.getElementById('pay-iframe-view');
+      const iframeIcon = document.getElementById('pay-iframe-icon');
+      const iframeTitle = document.getElementById('pay-iframe-title');
+      const iframeSubtitle = document.getElementById('pay-iframe-subtitle');
+      const iframeRecipient = document.getElementById('pay-iframe-recipient');
 
       const formView = document.getElementById('pay-form-view');
       const addressView = document.getElementById('pay-address-view');
@@ -1368,7 +1403,7 @@
       };
 
       function setActiveView(view) {
-        [formView, addressView, processingView, successView].forEach(v => v.classList.remove('active'));
+        [iframeView, formView, addressView, processingView, successView].forEach(v => v.classList.remove('active'));
         view.classList.add('active');
       }
 
@@ -1404,17 +1439,16 @@
         }
       }
 
+      // Opens the modal straight to the NOWPayments donation widget for
+      // whichever reel/support-type the visitor clicked.
       function openPayModal(type, reelNum) {
         const preset = presets[type] || presets.coffee;
         currentReel = reelNum;
-        payIcon.textContent = preset.icon;
-        payTitle.textContent = preset.title;
-        paySubtitle.textContent = preset.sub;
-        payRecipient.textContent = `Going to ${creatorName} · Reel ${reelNum}`;
-        customAmountInput.value = '';
-        messageInput.value = '';
-        renderAmounts(preset.amounts);
-        setActiveView(formView);
+        iframeIcon.textContent = preset.icon;
+        iframeTitle.textContent = preset.title;
+        iframeSubtitle.textContent = preset.sub;
+        iframeRecipient.textContent = `Going to ${creatorName} · Reel ${reelNum}`;
+        setActiveView(iframeView);
         overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
       }
@@ -1423,7 +1457,7 @@
         overlay.classList.remove('open');
         document.body.style.overflow = '';
         setTimeout(() => {
-          setActiveView(formView);
+          setActiveView(iframeView);
           copyBtn.textContent = 'Copy';
           copyBtn.classList.remove('copied');
         }, 200);
@@ -1465,14 +1499,16 @@
         }
       });
 
-      // Step 1 -> Step 2: show the USDT address + QR code for the chosen amount
+      // (Unused now that the NOWPayments embed is the default view) —
+      // kept for an optional fallback flow: Step 1 -> Step 2, show the
+      // USDT address + QR code for the chosen amount.
       submitBtn.addEventListener('click', function() {
         if (!selectedAmount || selectedAmount <= 0) return;
         showAddressStep();
       });
 
       backBtn.addEventListener('click', function() {
-        setActiveView(formView);
+        setActiveView(iframeView);
       });
 
       copyBtn.addEventListener('click', function() {
@@ -1488,10 +1524,7 @@
         });
       });
 
-      // Step 2 -> "I've sent it": this is a SIMULATED confirmation only.
-      // A real integration needs to verify the transaction on-chain
-      // (e.g. via a block explorer API or a webhook from Bybit) before
-      // showing success — never treat a user's click alone as proof of payment.
+      // (Unused fallback) Step 2 -> "I've sent it": simulated confirmation.
       sentBtn.addEventListener('click', function() {
         setActiveView(processingView);
         setTimeout(() => {
